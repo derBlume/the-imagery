@@ -1,10 +1,32 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-<head>
-    <title></title>
-</head>
-<body>
-    <script src="/js/vue.js"></script>
-    <script src="/js/axios.min.js"></script>
-</body>
+    <head>
+        <link rel="stylesheet" href="/style.css" />
+        <title>The Imagery</title>
+    </head>
+    <body>
+        <div id="main">
+            <header>
+                <h1 class="logo">
+                    TH<span class="e">E</span><span class="dash">_</span>IMAGERY
+                </h1>
+            </header>
+            <main class="imageboard">
+                <article class="imagecard" v-for="image in images">
+                    <img
+                        class="image"
+                        :src="image.url"
+                        :alt="image.description"
+                    />
+                    <div class="text">
+                        <div class="title">{{image.title}}</div>
+                        <div class="footer">by {{image.username}}</div>
+                    </div>
+                </article>
+            </main>
+        </div>
+        <script src="/js/vue.js"></script>
+        <script src="/js/axios.min.js"></script>
+        <script src="/script.js"></script>
+    </body>
 </html>
