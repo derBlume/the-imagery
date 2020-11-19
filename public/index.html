@@ -5,14 +5,60 @@
         <title>The Imagery</title>
     </head>
     <body>
-        <div id="main">
+        <div id="main" @click="showUpload = false">
             <header>
                 <h1 class="logo">
                     TH<span class="e">E</span><span class="dash">_</span>IMAGERY
                 </h1>
             </header>
+
             <main class="imageboard">
-                <article class="imagecard" v-for="image in images">
+                <article class="imagecard upload">
+                    <div class="add" @click.stop="showUpload = true">
+                        <h1>+</h1>
+                    </div>
+                    <div class="text upload" v-if="showUpload" @click.stop="">
+                        <form action="POST" @submit.prevent="handleUpload">
+                            <input
+                                @change="handleFile"
+                                type="file"
+                                name="file"
+                                id="file"
+                                accept="image/*"
+                            />
+                            <input
+                                v-model="form.title"
+                                type="text"
+                                name="title"
+                                id="title"
+                                placeholder="Title"
+                            />
+                            <input
+                                v-model="form.description"
+                                type="text"
+                                name="description"
+                                id="description"
+                                placeholder="Description"
+                            />
+                            <input
+                                v-model="form.username"
+                                type="text"
+                                name="username"
+                                id="username"
+                                placeholder="Username"
+                            />
+                            <button type="submit">Submit</button>
+                            <span @click="resetForm">reset</span>
+                        </form>
+                        <p v-if="error">Something went wrong.</p>
+                    </div>
+                </article>
+
+                <article
+                    class="imagecard"
+                    v-for="image in images"
+                    @click="bigImage = image.id"
+                >
                     <img
                         class="image"
                         :src="image.url"
@@ -24,7 +70,32 @@
                     </div>
                 </article>
             </main>
+            <big-image
+                v-if="bigImage"
+                :id="bigImage"
+                @close="bigImage = null"
+            ></big-image>
         </div>
+
+        <!-- TEMPLATES -->
+        <script id="big-image" type="text/x-template">
+            <div class="big-image" @click="$emit('close')">
+                <img class="image" :src="image.url" alt="">
+                <div class="text">
+                        <div class="title"><strong>{{image.title}}</strong> {{image.description}}</div>
+                        <div class="footer">by {{image.username}} ({{image.created_at}})</div>
+                    </div>
+                <!-- <div>This is the big image with ID {{id}}. <br>
+                Title: {{image.title}} <br>
+                Description:  <br>
+                Username: {{image.username}} <br>
+                Created at: </div> -->
+
+
+            </div>
+        </script>
+
+        <!-- SCRIPTS -->
         <script src="/js/vue.js"></script>
         <script src="/js/axios.min.js"></script>
         <script src="/script.js"></script>
