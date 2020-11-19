@@ -7,11 +7,6 @@
                 image: {},
             };
         },
-        /* methods: {
-            closeBigImage() {
-                this.$emit("close");
-            },
-        }, */
         mounted() {
             axios
                 .get(`/images/${this.id}`)
@@ -22,12 +17,42 @@
         },
     });
 
+    Vue.component("comment-section", {
+        template: "#comment-section",
+        props: ["id"],
+        data: () => {
+            return {
+                comments: [],
+                form: {
+                    text: "",
+                    username: "",
+                },
+            };
+        },
+        methods: {
+            addComment() {
+                axios
+                    .post("/comment", { ...this.form, image_id: this.id })
+                    .then((response) => this.comments.unshift(response.data))
+                    .catch((err) => console.log(err));
+            },
+        },
+        mounted() {
+            axios
+                .get(`/comments/${this.id}`)
+                .then((response) => (this.comments = response.data))
+                .catch((err) => console.log(err));
+        },
+    });
+
     new Vue({
         el: "#main",
         data: {
             images: [],
             bigImage: null,
-            showUpload: false,
+            uploadForm: false,
+            lastImageId: "",
+            moreButton: true,
             error: false,
             form: {
                 title: "",
@@ -65,14 +90,22 @@
                     })
                     .catch((err) => (this.error = err));
             },
+            getImages() {
+                axios
+                    .get(`/images?lastId=${this.lastImageId}`)
+                    .then((response) => {
+                        this.images = [...this.images, ...response.data.images];
+                        this.lastImageId = [...this.images].pop().id;
+                        if (
+                            this.lastImageId == response.data.lastImageInDB.id
+                        ) {
+                            this.moreButton = false;
+                        }
+                    });
+            },
         },
         mounted() {
-            axios.get("/images").then((response) => {
-                response.data.sort((a, b) => {
-                    return a.created_at < b.created_at;
-                });
-                this.images = response.data;
-            });
+            this.getImages();
         },
     });
 })();

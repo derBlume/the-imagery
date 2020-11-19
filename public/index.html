@@ -5,7 +5,7 @@
         <title>The Imagery</title>
     </head>
     <body>
-        <div id="main" @click="showUpload = false">
+        <div id="main" @click="uploadForm = false">
             <header>
                 <h1 class="logo">
                     TH<span class="e">E</span><span class="dash">_</span>IMAGERY
@@ -14,10 +14,10 @@
 
             <main class="imageboard">
                 <article class="imagecard upload">
-                    <div class="add" @click.stop="showUpload = true">
+                    <div class="add" @click.stop="uploadForm = true">
                         <h1>+</h1>
                     </div>
-                    <div class="text upload" v-if="showUpload" @click.stop="">
+                    <div class="text upload" v-if="uploadForm" @click.stop="">
                         <form action="POST" @submit.prevent="handleUpload">
                             <input
                                 @change="handleFile"
@@ -65,11 +65,14 @@
                         :alt="image.description"
                     />
                     <div class="text">
-                        <div class="title">{{image.title}}</div>
+                        <div class="title">{{image.id}} {{image.title}}</div>
                         <div class="footer">by {{image.username}}</div>
                     </div>
                 </article>
             </main>
+
+            <h1 v-if="moreButton" @click="getImages">more</h1>
+
             <big-image
                 v-if="bigImage"
                 :id="bigImage"
@@ -79,19 +82,44 @@
 
         <!-- TEMPLATES -->
         <script id="big-image" type="text/x-template">
-            <div class="big-image" @click="$emit('close')">
+            <div class="big-image" >
                 <img class="image" :src="image.url" alt="">
                 <div class="text">
-                        <div class="title"><strong>{{image.title}}</strong> {{image.description}}</div>
+                        <div class="title"><span @click="$emit('close')">X </span><strong>{{image.title}}</strong> {{image.description}}</div>
+                        <comment-section :id="id"></comment-section>
                         <div class="footer">by {{image.username}} ({{image.created_at}})</div>
                     </div>
-                <!-- <div>This is the big image with ID {{id}}. <br>
-                Title: {{image.title}} <br>
-                Description:  <br>
-                Username: {{image.username}} <br>
-                Created at: </div> -->
+            </div>
+        </script>
 
-
+        <script id="comment-section" type="text/x-template">
+            <div>
+                <div>Comment Section of picture with ID {{id}}:</div>
+                <div>
+                    <form action="POST" @submit.prevent="addComment">
+                        <input
+                            v-model="form.text"
+                            type="text"
+                            name="text"
+                            id="text"
+                            placeholder="Your Comment"
+                        />
+                        <input
+                            v-model="form.username"
+                            type="text"
+                            name="username"
+                            id="username"
+                            placeholder="Username"
+                        />
+                        <button type="submit">Submit</button>
+                    </form>
+                </div>
+                <div v-for="comment in comments">
+                    <p>ID: {{comment.id}}</p>
+                    <p>Text: {{comment.text}}</p>
+                    <p>Username: {{comment.username}}</p>
+                    <p>Date: {{comment.created_at}}</p>
+                </div>
             </div>
         </script>
 

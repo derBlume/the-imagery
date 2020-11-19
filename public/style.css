@@ -18,8 +18,8 @@ body {
     font-family: "Aldrich", sans-serif;
     text-align: center;
     color: cornflowerblue;
-    font-size: 4em;
-    padding: 40px 0;
+    font-size: calc(100vw / 10);
+    padding: calc(100vw / 10) 0;
 }
 
 .logo .dash {
@@ -41,11 +41,11 @@ body {
 
 .imagecard {
     box-sizing: border-box;
-    width: 30%;
+    width: 30vw;
     height: 30vw;
     position: relative;
     padding: 0;
-    margin: 10px;
+    margin: 1vw;
     border-radius: 3px;
     overflow: hidden;
 }
