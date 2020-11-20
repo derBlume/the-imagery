@@ -1,10 +1,9 @@
-# Styling upload Kachel
+# Styling: upload Kachel, Formular
 
--   "+"
--   Formular
+# Styling: Modal
 
-# Styling: fix wobbly logo
-
-# clear file field
+## Styling: fix wobbly logo
 
 # Check for empty fields before upload
+
+# error handling

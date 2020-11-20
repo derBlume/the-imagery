@@ -57,7 +57,7 @@
                 <article
                     class="imagecard"
                     v-for="image in images"
-                    @click="bigImage = image.id"
+                    @click="openBigImage(image.id)"
                 >
                     <img
                         class="image"
@@ -76,7 +76,9 @@
             <big-image
                 v-if="bigImage"
                 :id="bigImage"
-                @close="bigImage = null"
+                :username="form.username"
+                @close="closeBigImage"
+                @usernamechanged="changeUsername"
             ></big-image>
         </div>
 
@@ -86,7 +88,7 @@
                 <img class="image" :src="image.url" alt="">
                 <div class="text">
                         <div class="title"><span @click="$emit('close')">X </span><strong>{{image.title}}</strong> {{image.description}}</div>
-                        <comment-section :id="id"></comment-section>
+                        <comment-section :id="id" :username="username"></comment-section>
                         <div class="footer">by {{image.username}} ({{image.created_at}})</div>
                     </div>
             </div>

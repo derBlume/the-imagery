@@ -1,33 +1,61 @@
 (function () {
     Vue.component("big-image", {
         template: "#big-image",
-        props: ["id"],
-        data: () => {
+        props: ["id", "username"],
+        data: function () {
             return {
                 image: {},
             };
         },
+        watch: {
+            id() {
+                console.log("watch id", this.id);
+
+                this.getImage();
+            },
+        },
+        methods: {
+            getImage() {
+                axios
+                    .get(`/images/${this.id}`)
+                    .then((response) => {
+                        this.image = response.data;
+                    })
+                    .catch((err) => {
+                        this.$emit("close");
+                        console.log("Error getting File:", err);
+                    });
+            },
+        },
         mounted() {
-            axios
-                .get(`/images/${this.id}`)
-                .then((response) => {
-                    this.image = response.data;
-                })
-                .catch((err) => console.log("Error getting File:", err));
+            console.log("username in big-image: ", this.username);
+
+            this.getImage();
         },
     });
 
     Vue.component("comment-section", {
         template: "#comment-section",
-        props: ["id"],
-        data: () => {
+        props: ["id", "username"],
+        data: function () {
+            console.log(this.username);
             return {
                 comments: [],
                 form: {
                     text: "",
-                    username: "",
+                    username: this.username,
                 },
             };
+        },
+        computed: {
+            returnUsername() {
+                return this.form.username;
+            },
+        },
+        watch: {
+            returnUsername() {
+                this.$parent.$emit("usernamechanged", this.returnUsername);
+            },
         },
         methods: {
             addComment() {
@@ -42,6 +70,8 @@
                 .get(`/comments/${this.id}`)
                 .then((response) => (this.comments = response.data))
                 .catch((err) => console.log(err));
+
+            console.log("username in comment-section: ", this.username);
         },
     });
 
@@ -49,7 +79,7 @@
         el: "#main",
         data: {
             images: [],
-            bigImage: null,
+            bigImage: location.hash.slice(1),
             uploadForm: false,
             lastImageId: "",
             moreButton: true,
@@ -62,10 +92,13 @@
             },
         },
         methods: {
+            changeUsername(username) {
+                this.form.username = username;
+            },
             resetForm() {
-                for (let field in this.form) {
-                    this.form[field] = "";
-                }
+                this.form.title = "";
+                this.form.description = "";
+                document.querySelector("input[type=file]").value = null;
             },
             handleFile(event) {
                 this.form.file = event.target.files[0];
@@ -83,9 +116,7 @@
                     .post("/upload", formData)
                     .then((response) => {
                         this.images.unshift(response.data);
-                        for (let field in this.form) {
-                            this.form[field] = "";
-                        }
+                        this.resetForm();
                         this.showUpload = false;
                     })
                     .catch((err) => (this.error = err));
@@ -103,9 +134,22 @@
                         }
                     });
             },
+            openBigImage(imageId) {
+                location.hash = imageId;
+                this.bigImage = imageId;
+            },
+            closeBigImage() {
+                location.hash = "";
+                this.bigImage = null;
+            },
         },
         mounted() {
             this.getImages();
+
+            window.addEventListener("hashchange", () => {
+                this.bigImage = location.hash.slice(1);
+                console.log(this.bigImage);
+            });
         },
     });
 })();

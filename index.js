@@ -35,7 +35,6 @@ app.get("/comments/:id", (request, response) => {
 });
 
 app.post("/comment", (request, response) => {
-    console.log(request.body);
     db.addComment(request.body).then((data) => {
         response.json(data.rows[0]);
     });

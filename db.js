@@ -6,7 +6,6 @@ const db = spicedPg(
 );
 
 module.exports.getImages = function getImages(lastId) {
-    console.log(lastId);
     if (lastId) {
         return Promise.all([
             db.query(
