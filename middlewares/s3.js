@@ -33,6 +33,7 @@ module.exports = (request, response, next) => {
         .promise()
         .then(() => {
             request.body.url = config.s3Url + filename;
+            fs.promises.unlink(path);
             next();
         })
         .catch((err) => {
