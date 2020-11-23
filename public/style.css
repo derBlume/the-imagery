@@ -14,12 +14,15 @@ body {
     position: relative;
 }
 
-.logo {
+header {
     font-family: "Aldrich", sans-serif;
-    text-align: center;
     color: cornflowerblue;
+}
+
+header.logo {
     font-size: calc(100vw / 10);
     padding: calc(100vw / 10) 0;
+    text-align: center;
 }
 
 .logo .dash {
@@ -48,6 +51,7 @@ body {
     margin: 1vw;
     border-radius: 3px;
     overflow: hidden;
+    cursor: pointer;
 }
 
 .imagecard .image {
@@ -56,8 +60,7 @@ body {
     object-fit: cover;
 }
 
-.imagecard .text,
-.big-image .text {
+.imagecard .text {
     position: absolute;
     top: 0;
     height: 100%;
@@ -69,8 +72,7 @@ body {
     color: white;
 }
 
-.imagecard .text .title,
-.big-image .text .title {
+.imagecard .text .title {
     padding: 5px;
     background: linear-gradient(
         to bottom,
@@ -79,8 +81,7 @@ body {
     );
 }
 
-.imagecard .text .footer,
-.big-image .text .footer {
+.imagecard .text .footer {
     padding: 5px;
     background: linear-gradient(
         to top,
@@ -104,8 +105,14 @@ body {
     justify-content: center;
     background-color: white;
     cursor: pointer;
-    /* z-index: 1; */
+    font-family: "Aldrich", sans-serif;
+    text-align: center;
+    color: cornflowerblue;
+    font-size: 4em;
+}
 
+.morebutton {
+    cursor: pointer;
     font-family: "Aldrich", sans-serif;
     text-align: center;
     color: cornflowerblue;
@@ -132,16 +139,121 @@ body {
     width: 100vw;
     height: 100vh;
     z-index: 2;
-    background-color: rgba(128, 128, 128, 0.692);
+    background-color: rgb(63, 62, 62);
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: flex-start;
     align-items: center;
 }
 
-.big-image .image {
-    max-width: 95vw;
-    max-height: 95vh;
+.big-image header {
+    background-color: white;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 2vw;
 }
+
+.big-image header .nav,
+.big-image header .close {
+    margin: 0 10px;
+    cursor: pointer;
+}
+
+.big-image main {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+.big-image main .text {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    color: white;
+}
+
+.big-image main .text .title {
+    padding: 5px;
+    background: linear-gradient(
+        to bottom,
+        rgba(44, 44, 44, 0.8),
+        rgba(44, 44, 44, 0)
+    );
+}
+
+.big-image main .text .footer {
+    padding: 5px;
+    background: linear-gradient(
+        to top,
+        rgba(44, 44, 44, 0.8),
+        rgba(44, 44, 44, 0)
+    );
+    text-align: right;
+}
+
+.big-image main .image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.big-image main .comment-section {
+    transform: translateY(-35px);
+    color: white;
+    width: 50%;
+
+    transition-property: transform;
+    transition-duration: 500ms;
+}
+
+.big-image main .comment-section .header {
+    padding: 5px;
+    height: 30px;
+    cursor: pointer;
+}
+
+.big-image main .comment-section .header.visible {
+    background: linear-gradient(
+        to top,
+        rgba(44, 44, 44, 0.8),
+        rgba(44, 44, 44, 0)
+    );
+}
+
+.big-image main .comment-section.visible {
+    transform: translateY(calc(-100% - 10px));
+}
+
+.big-image main .comment-section .comments,
+.big-image main .comment-section .add-comment {
+    background-color: rgba(44, 44, 44, 0.8);
+    padding: 10px 5px;
+}
+
+.big-image main .comment-section .comments {
+    max-height: calc(100vh * 0.4);
+    overflow: scroll;
+}
+
+.big-image main .comment-section .add-comment form {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 30% 60% 10%;
+}
+
+/* @media (orientation: landscape) {
+    .logo {
+        font-size: calc(100vw / 20);
+        padding: calc(100vw / 20) 0;
+    }
+} */
 
 @media screen and (max-width: 480px) {
     .imagecard {

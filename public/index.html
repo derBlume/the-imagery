@@ -6,17 +6,13 @@
     </head>
     <body>
         <div id="main" @click="uploadForm = false">
-            <header>
-                <h1 class="logo">
-                    TH<span class="e">E</span><span class="dash">_</span>IMAGERY
-                </h1>
+            <header class="logo">
+                TH<span class="e">E</span><span class="dash">_</span>IMAGERY
             </header>
 
             <main class="imageboard">
                 <article class="imagecard upload">
-                    <div class="add" @click.stop="uploadForm = true">
-                        <h1>+</h1>
-                    </div>
+                    <div class="add" @click.stop="uploadForm = true">+</div>
                     <div class="text upload" v-if="uploadForm" @click.stop="">
                         <form action="POST" @submit.prevent="handleUpload">
                             <input
@@ -65,13 +61,19 @@
                         :alt="image.description"
                     />
                     <div class="text">
-                        <div class="title">{{image.id}} {{image.title}}</div>
+                        <div class="title">{{image.title}}</div>
                         <div class="footer">by {{image.username}}</div>
                     </div>
                 </article>
             </main>
 
-            <h1 v-if="moreButton" @click="getImages">more</h1>
+            <div
+                class="morebutton"
+                v-if="moreButton"
+                @click="getImages(pagination)"
+            >
+                >>>
+            </div>
 
             <big-image
                 v-if="bigImage"
@@ -79,33 +81,49 @@
                 :username="form.username"
                 @close="closeBigImage"
                 @usernamechanged="changeUsername"
+                @newimage="openBigImage"
             ></big-image>
         </div>
 
         <!-- TEMPLATES -->
-        <script id="big-image" type="text/x-template">
-            <div class="big-image" >
-                <img class="image" :src="image.url" alt="">
-                <div class="text">
-                        <div class="title"><span @click="$emit('close')">X </span><strong>{{image.title}}</strong> {{image.description}}</div>
-                        <comment-section :id="id" :username="username"></comment-section>
-                        <div class="footer">by {{image.username}} ({{image.created_at}})</div>
+        <template id="big-image" type="text/x-template">
+            <div class="big-image">
+                <header>
+                    <div class="nav">
+                        <span v-if="prevImage" @click="openPrevImage"><</span>
+                        <span v-if="nextImage" @click="openNextImage">></span>
                     </div>
-            </div>
-        </script>
+                    <div class="logo">
+                        TH<span class="e">E</span
+                        ><span class="dash">_</span>IMAGERY
+                    </div>
+                    <div class="close" @click="$emit('close')">X</div>
+                </header>
+                <main>
+                    <img class="image" :src="image.url" alt="" />
+                    <div class="text">
+                        <div class="title">
+                            <strong>{{image.title}}</strong>
+                            {{image.description}}
+                        </div>
 
-        <script id="comment-section" type="text/x-template">
-            <div>
-                <div>Comment Section of picture with ID {{id}}:</div>
-                <div>
+                        <div class="footer">
+                            by {{image.username}} ({{image.created_at}})
+                        </div>
+                    </div>
+                    <comment-section
+                        :id="id"
+                        :username="username"
+                    ></comment-section>
+                </main>
+            </div>
+        </template>
+
+        <template id="comment-section" type="text/x-template">
+            <div class="comment-section">
+                <div class="header">Thoughts...</div>
+                <div class="add-comment">
                     <form action="POST" @submit.prevent="addComment">
-                        <input
-                            v-model="form.text"
-                            type="text"
-                            name="text"
-                            id="text"
-                            placeholder="Your Comment"
-                        />
                         <input
                             v-model="form.username"
                             type="text"
@@ -113,17 +131,28 @@
                             id="username"
                             placeholder="Username"
                         />
-                        <button type="submit">Submit</button>
+                        <input
+                            v-model="form.text"
+                            type="text"
+                            name="text"
+                            id="text"
+                            placeholder="Your Comment"
+                        />
+
+                        <button type="submit">>></button>
                     </form>
                 </div>
-                <div v-for="comment in comments">
-                    <p>ID: {{comment.id}}</p>
-                    <p>Text: {{comment.text}}</p>
-                    <p>Username: {{comment.username}}</p>
-                    <p>Date: {{comment.created_at}}</p>
+                <div class="comments">
+                    <div class="comment" v-for="comment in comments">
+                        <p>
+                            <strong>{{comment.username}}:</strong>
+                            {{comment.text}}
+                        </p>
+                        <p></p>
+                    </div>
                 </div>
             </div>
-        </script>
+        </template>
 
         <!-- SCRIPTS -->
         <script src="/js/vue.js"></script>

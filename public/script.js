@@ -5,13 +5,20 @@
         data: function () {
             return {
                 image: {},
+                nextImage: null,
+                prevImage: null,
+                showComments: false,
             };
         },
         watch: {
             id() {
-                console.log("watch id", this.id);
-
                 this.getImage();
+            },
+            image() {
+                this.image.created_at = new Date(
+                    this.image.created_at
+                ).toLocaleString();
+                console.log(this.image.created_at);
             },
         },
         methods: {
@@ -19,12 +26,21 @@
                 axios
                     .get(`/images/${this.id}`)
                     .then((response) => {
-                        this.image = response.data;
+                        const { image, prevImage, nextImage } = response.data;
+                        this.image = image;
+                        this.prevImage = prevImage ? prevImage.id : null;
+                        this.nextImage = nextImage ? nextImage.id : null;
                     })
                     .catch((err) => {
                         this.$emit("close");
                         console.log("Error getting File:", err);
                     });
+            },
+            openPrevImage() {
+                this.$emit("newimage", this.prevImage);
+            },
+            openNextImage() {
+                this.$emit("newimage", this.nextImage);
             },
         },
         mounted() {
@@ -53,6 +69,9 @@
             },
         },
         watch: {
+            id() {
+                this.getComments();
+            },
             returnUsername() {
                 this.$parent.$emit("usernamechanged", this.returnUsername);
             },
@@ -61,17 +80,34 @@
             addComment() {
                 axios
                     .post("/comment", { ...this.form, image_id: this.id })
-                    .then((response) => this.comments.unshift(response.data))
+                    .then((response) => {
+                        this.comments.unshift(response.data);
+                        this.form.text = "";
+                    })
                     .catch((err) => console.log(err));
+            },
+            getComments() {
+                axios
+                    .get(`/comments/${this.id}`)
+                    .then((response) => (this.comments = response.data))
+                    .catch((err) => console.log(err));
+
+                console.log("username in comment-section: ", this.username);
             },
         },
         mounted() {
-            axios
-                .get(`/comments/${this.id}`)
-                .then((response) => (this.comments = response.data))
-                .catch((err) => console.log(err));
+            this.getComments();
+            const commentSection = document.querySelector(
+                ".big-image main .comment-section"
+            );
+            const commentHeader = document.querySelector(
+                ".big-image main .comment-section .header"
+            );
 
-            console.log("username in comment-section: ", this.username);
+            commentHeader.addEventListener("click", () => {
+                commentSection.classList.toggle("visible");
+                commentHeader.classList.toggle("visible");
+            });
         },
     });
 
@@ -82,6 +118,7 @@
             bigImage: location.hash.slice(1),
             uploadForm: false,
             lastImageId: "",
+            pagination: 6,
             moreButton: true,
             error: false,
             form: {
@@ -116,14 +153,18 @@
                     .post("/upload", formData)
                     .then((response) => {
                         this.images.unshift(response.data);
+                        this.images.pop();
+                        this.lastImageId = [...this.images].pop().id;
                         this.resetForm();
                         this.showUpload = false;
                     })
                     .catch((err) => (this.error = err));
             },
-            getImages() {
+            getImages(numberOfPictures) {
                 axios
-                    .get(`/images?lastId=${this.lastImageId}`)
+                    .get(
+                        `/images?lastId=${this.lastImageId}&number=${numberOfPictures}`
+                    )
                     .then((response) => {
                         this.images = [...this.images, ...response.data.images];
                         this.lastImageId = [...this.images].pop().id;
@@ -144,7 +185,7 @@
             },
         },
         mounted() {
-            this.getImages();
+            this.getImages(this.pagination - 1);
 
             window.addEventListener("hashchange", () => {
                 this.bigImage = location.hash.slice(1);

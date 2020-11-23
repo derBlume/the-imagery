@@ -7,3 +7,9 @@
 # Check for empty fields before upload
 
 # error handling
+
+# Datum
+
+# prev/next functionality
+
+## template or script tag?

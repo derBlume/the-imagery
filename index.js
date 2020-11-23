@@ -11,14 +11,22 @@ app.use(express.json());
 app.use(express.static("public"));
 
 app.get("/images", (request, response) => {
-    db.getImages(request.query.lastId).then((data) => {
-        response.json({ images: data[0].rows, lastImageInDB: data[1].rows[0] });
+    db.getImages(request.query).then((data) => {
+        response.json({
+            images: data[0].rows,
+            lastImageInDB: data[1].rows[0],
+        });
     });
 });
 
 app.get("/images/:id", (request, response) => {
     db.getImageById(request.params.id).then((data) => {
-        response.json(data.rows[0]);
+        console.log(data[1].rows[0], data[2].rows[0]);
+        response.json({
+            image: data[0].rows[0],
+            nextImage: data[1].rows[0],
+            prevImage: data[2].rows[0],
+        });
     });
 });
 
