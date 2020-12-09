@@ -242,6 +242,10 @@ header.logo {
     overflow: scroll;
 }
 
+.big-image main .comment-section .comments p {
+    margin: 5px 0;
+}
+
 .big-image main .comment-section .add-comment form {
     width: 100%;
     display: grid;

@@ -28,11 +28,11 @@ module.exports.getImageById = function getImageById(id) {
     return Promise.all([
         db.query("SELECT * FROM images WHERE id = $1", [id]),
         db.query(
-            "SELECT id FROM images WHERE id < $1 ORDER BY id DESC  LIMIT 1",
+            "SELECT id FROM images WHERE id < $1 ORDER BY id DESC LIMIT 1",
             [id]
         ),
         db.query(
-            "SELECT id FROM images WHERE id > $1 ORDER BY id ASC  LIMIT 1",
+            "SELECT id FROM images WHERE id > $1 ORDER BY id ASC LIMIT 1",
             [id]
         ),
     ]);
